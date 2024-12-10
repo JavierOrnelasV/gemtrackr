@@ -8,5 +8,5 @@ class Account < ApplicationRecord
   validates :name, presence: true
   validates :type, presence: true
 
-  enum type: [ :cash, :debit_card, :credit_card, :savings ]
+  enum :type, [ :cash, :debit_card, :credit_card, :savings ]
 end
