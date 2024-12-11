@@ -4,7 +4,7 @@ class Movement < ApplicationRecord
   validates :amount, presence: true
   validates :category, presence: true
 
-  enum :movement_type, {
+  enum :type, {
     income: 1,
     expense: 2
   }
