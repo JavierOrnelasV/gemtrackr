@@ -4,10 +4,12 @@ class Movement < ApplicationRecord
   validates :amount, presence: true
   validates :category, presence: true
 
-  enum :type, {
+  validate :category_matches_type?
+
+  enum :movement_type, {
     income: 1,
     expense: 2
-  }
+  }, prefix: :is
 
   enum :category, {
     salary: 1,
@@ -27,7 +29,7 @@ class Movement < ApplicationRecord
     music: 112,
     sports: 113,
     games: 114,
-    videoganes: 115,
+    videogames: 115,
     books: 116,
     education: 117,
     travel: 118,
@@ -37,13 +39,31 @@ class Movement < ApplicationRecord
     investments: 122,
     savings: 123,
     other: 999
-  }
+  }, suffix: true
 
   def self.income_categories
-    categories.select { |k, v| v / 100 == 0 }
+    categories.select { |category_name, category_value| category_value / 100 == 0 }
   end
 
   def self.expense_categories
-    categories.select { |k, v| v / 100 != 0 }
+    categories.select { |category_name, category_value| category_value / 100 != 0 }
+  end
+
+  def category_matches_type?
+      return true if is_income? && is_income_category?
+
+      return true if is_expense? && is_expense_category?
+
+      errors.add(:category, "is not a valid category")
+  end
+
+  private
+
+  def is_income_category?
+    Movement.categories[category] / 100 == 0
+  end
+
+  def is_expense_category?
+    Movement.categories[category] / 100 != 0
   end
 end
